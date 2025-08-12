@@ -124,7 +124,7 @@ export async function thoughtsStatusCommand(options: StatusOptions): Promise<voi
     const config = loadThoughtsConfig(options)
 
     if (!config) {
-      console.error(chalk.red('Error: Thoughts not configured. Run "humanlayer thoughts init" first.'))
+      console.error(chalk.red('Error: Thoughts not configured. Run "thoughts init" first.'))
       process.exit(1)
     }
 
@@ -176,7 +176,7 @@ export async function thoughtsStatusCommand(options: StatusOptions): Promise<voi
       console.log(chalk.yellow('Uncommitted changes:'))
       changes.forEach(change => console.log(change))
       console.log('')
-      console.log(chalk.gray('Run "humanlayer thoughts sync" to commit these changes'))
+      console.log(chalk.gray('Run "thoughts sync" to commit these changes'))
     } else {
       console.log(chalk.green('✓ No uncommitted changes'))
     }

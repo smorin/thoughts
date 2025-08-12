@@ -1,20 +1,17 @@
 {
-  "name": "humanlayer",
-  "version": "0.11.0",
-  "description": "HumanLayer, but on your command-line.",
+  "name": "thoughts",
+  "version": "0.1.0",
+  "description": "Developer thoughts and notes management system",
   "type": "module",
   "bin": {
-    "humanlayer": "dist/index.js",
-    "hlyr": "dist/index.js"
+    "thoughts": "dist/index.js"
   },
   "files": [
     "dist/**/*",
     "README.md"
   ],
   "scripts": {
-    "build": "tsup && npm run build-go",
-    "build-go": "npm run build-daemon",
-    "build-daemon": "cd ../hld && go build -o hld ./cmd/hld && mkdir -p ../hlyr/dist/bin && cp hld ../hlyr/dist/bin/",
+    "build": "tsup",
     "build:watch": "tsup --watch",
     "dev": "npm run build && ./dist/index.js",
     "lint": "eslint . --ext .ts",
@@ -26,12 +23,9 @@
     "clean": "rm -rf dist/"
   },
   "dependencies": {
-    "@humanlayer/sdk": "^0.7.7",
-    "@modelcontextprotocol/sdk": "^1.12.0",
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
-    "dotenv": "^16.5.0",
-    "play-sound": "^1.1.6"
+    "dotenv": "^16.5.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",
@@ -50,10 +44,10 @@
   },
   "keywords": [
     "cli",
-    "human",
-    "communication",
-    "humanlayer"
+    "thoughts",
+    "notes",
+    "developer-tools"
   ],
-  "author": "HumanLayer Authors",
+  "author": "Thoughts Contributors",
   "license": "Apache-2.0"
 }

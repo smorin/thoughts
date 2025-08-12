@@ -25,7 +25,7 @@ export async function thoughtsConfigCommand(options: ConfigOptions): Promise<voi
 
     if (!config) {
       console.error(chalk.red('No thoughts configuration found.'))
-      console.error('Run "humanlayer thoughts init" to create one.')
+      console.error('Run "thoughts init" to create one.')
       process.exit(1)
     }
 
@@ -61,7 +61,7 @@ export async function thoughtsConfigCommand(options: ConfigOptions): Promise<voi
     }
 
     console.log('')
-    console.log(chalk.gray('To edit configuration, run: humanlayer thoughts config --edit'))
+    console.log(chalk.gray('To edit configuration, run: thoughts config --edit'))
   } catch (error) {
     console.error(chalk.red(`Error showing thoughts config: ${error}`))
     process.exit(1)

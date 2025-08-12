@@ -2,13 +2,12 @@ import dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 import chalk from 'chalk'
-import { ContactChannel } from '@humanlayer/sdk'
 
 // Load environment variables
 dotenv.config()
 
 export type ConfigFile = {
-  channel: ContactChannel
+  channel?: string
   api_key?: string
   api_base_url?: string
   app_base_url?: string

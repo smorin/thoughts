@@ -64,7 +64,7 @@ function syncThoughts(thoughtsRepo: string, message: string): void {
         console.error(chalk.red('Error: Merge conflict detected in thoughts repository'))
         console.error(chalk.red('Please resolve conflicts manually in:'), expandedRepo)
         console.error(
-          chalk.red('Then run "git rebase --continue" and "humanlayer thoughts sync" again'),
+          chalk.red('Then run "git rebase --continue" and "thoughts sync" again'),
         )
         process.exit(1)
       } else {
@@ -199,7 +199,7 @@ export async function thoughtsSyncCommand(options: SyncOptions): Promise<void> {
     const config = loadThoughtsConfig(options)
 
     if (!config) {
-      console.error(chalk.red('Error: Thoughts not configured. Run "humanlayer thoughts init" first.'))
+      console.error(chalk.red('Error: Thoughts not configured. Run "thoughts init" first.'))
       process.exit(1)
     }
 
@@ -209,7 +209,7 @@ export async function thoughtsSyncCommand(options: SyncOptions): Promise<void> {
 
     if (!fs.existsSync(thoughtsDir)) {
       console.error(chalk.red('Error: Thoughts not initialized for this repository.'))
-      console.error('Run "humanlayer thoughts init" to set up thoughts.')
+      console.error('Run "thoughts init" to set up thoughts.')
       process.exit(1)
     }
 

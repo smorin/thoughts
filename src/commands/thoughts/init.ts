@@ -151,7 +151,7 @@ The \`searchable/\` directory contains hard links to all thoughts files accessib
 **IMPORTANT**:
 - Files in \`thoughts/searchable/\` are hard links to the original files (editing either updates both)
 - For clarity and consistency, always reference files by their canonical path (e.g., \`thoughts/${user}/todo.md\`, not \`thoughts/searchable/${user}/todo.md\`)
-- The \`searchable/\` directory is automatically updated when you run \`humanlayer thoughts sync\`
+- The \`searchable/\` directory is automatically updated when you run \`thoughts sync\`
 
 This design ensures that:
 1. Search tools can find all your thoughts content easily
@@ -177,8 +177,8 @@ These files will be automatically synchronized with your thoughts repository whe
 
 - Never commit the thoughts/ directory to your code repository
 - The git pre-commit hook will prevent accidental commits
-- Use \`humanlayer thoughts sync\` to manually sync changes
-- Use \`humanlayer thoughts status\` to see sync status
+- Use \`thoughts sync\` to manually sync changes
+- Use \`thoughts status\` to see sync status
 `
 }
 
@@ -240,7 +240,7 @@ fi
 # Check if we're in a worktree
 if [ -f .git ]; then
     # Skip auto-sync in worktrees to avoid repository boundary confusion
-    # See: https://linear.app/humanlayer/issue/ENG-1455
+    # Background sync process
     exit 0
 fi
 
@@ -248,7 +248,7 @@ fi
 COMMIT_MSG=$(git log -1 --pretty=%B)
 
 # Auto-sync thoughts after each commit (only in non-worktree repos)
-humanlayer thoughts sync --message "Auto-sync with commit: $COMMIT_MSG" >/dev/null 2>&1 &
+thoughts sync --message "Auto-sync with commit: $COMMIT_MSG" >/dev/null 2>&1 &
 
 # Call any existing post-commit hook
 if [ -f "${postCommitPath}.old" ]; then
@@ -657,12 +657,12 @@ export async function thoughtsInitCommand(options: InitOptions): Promise<void> {
     console.log(`  ${chalk.green('✓')} Post-commit hook: Auto-syncs thoughts after commits`)
     console.log('')
     console.log('Next steps:')
-    console.log(`  1. Run ${chalk.cyan('humanlayer thoughts sync')} to create the searchable index`)
+    console.log(`  1. Run ${chalk.cyan('thoughts sync')} to create the searchable index`)
     console.log(
       `  2. Create markdown files in ${chalk.cyan(`thoughts/${config.user}/`)} for your notes`,
     )
     console.log(`  3. Your thoughts will sync automatically when you commit code`)
-    console.log(`  4. Run ${chalk.cyan('humanlayer thoughts status')} to check sync status`)
+    console.log(`  4. Run ${chalk.cyan('thoughts status')} to check sync status`)
   } catch (error) {
     console.error(chalk.red(`Error during thoughts init: ${error}`))
     process.exit(1)
