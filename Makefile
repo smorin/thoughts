@@ -1,6 +1,6 @@
-# HumanLayer CLI (hlyr) Makefile
+# Thoughts CLI Makefile
 
-.PHONY: help install dev build build-go build-daemon lint format format-check test test-watch check check-quiet clean
+.PHONY: help install dev build lint format format-check test test-watch check check-quiet clean
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -12,14 +12,8 @@ install: ## Install dependencies
 dev: ## Build and run the CLI
 	npm run dev
 
-build: ## Build the TypeScript and Go binaries
+build: ## Build the TypeScript
 	npm run build
-
-build-go: ## Build Go binaries (daemon and TUI)
-	npm run build-go
-
-build-daemon: ## Build the daemon binary
-	npm run build-daemon
 
 lint: ## Run ESLint
 	npm run lint
@@ -34,15 +28,18 @@ test-watch: ## Run tests in watch mode
 	npm run test:watch
 
 check-quiet: ## Run all quality checks with quiet output
-	@. ../hack/run_silent.sh && print_header "hlyr" "CLI tool checks"
-	@. ../hack/run_silent.sh && run_silent "Format check passed" "npm run format:check"
-	@. ../hack/run_silent.sh && run_silent "Lint check passed" "npm run lint"
-	@. ../hack/run_silent.sh && run_silent_with_test_count "Tests passed" "npm run test" "vitest"
-	@. ../hack/run_silent.sh && run_with_quiet "Build completed" "npm run build"
+	@echo "Running format check..."
+	@npm run format:check
+	@echo "Running lint..."
+	@npm run lint
+	@echo "Running tests..."
+	@npm run test
+	@echo "Building..."
+	@npm run build
 
 test-quiet: ## Run tests with quiet output
-	@. ../hack/run_silent.sh && print_header "hlyr" "CLI tests"
-	@. ../hack/run_silent.sh && run_silent_with_test_count "Vitest passed" "npm run test" "vitest"
+	@echo "Running tests..."
+	@npm run test
 
 check: ## Run all quality checks (format + lint + test + build)
 	@if [ -n "$$VERBOSE" ]; then \

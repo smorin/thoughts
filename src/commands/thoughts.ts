@@ -6,9 +6,7 @@ import { thoughtsStatusCommand } from './thoughts/status.js'
 import { thoughtsConfigCommand } from './thoughts/config.js'
 
 export function thoughtsCommand(program: Command): void {
-  const thoughts = program.command('thoughts').description('Manage developer thoughts and notes')
-
-  thoughts
+  program
     .command('init')
     .description('Initialize thoughts for current repository')
     .option('--force', 'Force reconfiguration even if already set up')
@@ -16,27 +14,27 @@ export function thoughtsCommand(program: Command): void {
     .option('--directory <name>', 'Specify the repository directory name (skips interactive prompt)')
     .action(thoughtsInitCommand)
 
-  thoughts
+  program
     .command('uninit')
     .description('Remove thoughts setup from current repository')
     .option('--force', 'Force removal even if not in configuration')
     .option('--config-file <path>', 'Path to config file')
     .action(thoughtsUninitCommand)
 
-  thoughts
+  program
     .command('sync')
     .description('Manually sync thoughts to thoughts repository')
     .option('-m, --message <message>', 'Commit message for sync')
     .option('--config-file <path>', 'Path to config file')
     .action(thoughtsSyncCommand)
 
-  thoughts
+  program
     .command('status')
     .description('Show status of thoughts repository')
     .option('--config-file <path>', 'Path to config file')
     .action(thoughtsStatusCommand)
 
-  thoughts
+  program
     .command('config')
     .description('View or edit thoughts configuration')
     .option('--edit', 'Open configuration in editor')

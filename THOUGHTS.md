@@ -1,6 +1,6 @@
-# HumanLayer Thoughts Management System
+# Thoughts Management System
 
-The HumanLayer Thoughts system helps developers manage their notes, architecture decisions, and development thoughts separately from code repositories while keeping them tightly integrated with their development workflow.
+The Thoughts system helps developers manage their notes, architecture decisions, and development thoughts separately from code repositories while keeping them tightly integrated with their development workflow.
 
 ## Overview
 
@@ -16,17 +16,17 @@ The thoughts system provides:
 
 ```bash
 # Initialize thoughts for your current repository
-humanlayer thoughts init
+thoughts init
 
 # Check the status of your thoughts
-humanlayer thoughts status
+thoughts status
 
 # Manually sync thoughts (usually automatic)
-humanlayer thoughts sync -m "Updated architecture notes"
+thoughts sync -m "Updated architecture notes"
 
 # View or edit configuration
-humanlayer thoughts config
-humanlayer thoughts config --edit
+thoughts config
+thoughts config --edit
 ```
 
 ## How It Works
@@ -82,19 +82,19 @@ This means you can work naturally - edit thoughts alongside code, and they'll be
 
 The `thoughts/searchable/` directory contains read-only hard links to all thoughts files. This allows AI tools to search your thoughts content without needing to follow symlinks. The searchable directory:
 
-- Is automatically updated when you run `humanlayer thoughts sync`
+- Is automatically updated when you run `thoughts sync`
 - Contains hard links (not copies) to preserve disk space
 - Is read-only to prevent accidental edits
 - Should not be edited directly - always edit the original files
 
 ## Commands
 
-### `humanlayer thoughts init`
+### `thoughts init`
 
 Initialize thoughts for the current repository.
 
 ```bash
-humanlayer thoughts init [options]
+thoughts init [options]
 
 Options:
   --force              Force reconfiguration even if already set up
@@ -109,12 +109,12 @@ Options:
 4. Installs git hooks for protection and auto-sync
 5. Generates CLAUDE.md for AI context
 
-### `humanlayer thoughts sync`
+### `thoughts sync`
 
 Manually sync thoughts to your thoughts repository.
 
 ```bash
-humanlayer thoughts sync [options]
+thoughts sync [options]
 
 Options:
   -m, --message <msg>  Commit message for the sync
@@ -123,12 +123,12 @@ Options:
 
 **Note:** Usually you don't need this - thoughts sync automatically on commits!
 
-### `humanlayer thoughts status`
+### `thoughts status`
 
 Check the status of your thoughts setup.
 
 ```bash
-humanlayer thoughts status [options]
+thoughts status [options]
 
 Options:
   --config-file <path> Use a specific config file
@@ -141,12 +141,12 @@ Shows:
 - Git status of thoughts repo
 - Any uncommitted changes
 
-### `humanlayer thoughts config`
+### `thoughts config`
 
 View or edit thoughts configuration.
 
 ```bash
-humanlayer thoughts config [options]
+thoughts config [options]
 
 Options:
   --edit               Open config in your $EDITOR
@@ -156,20 +156,17 @@ Options:
 
 ## Configuration
 
-Thoughts configuration is stored in your HumanLayer config file:
+Thoughts configuration is stored in `~/.thoughts/config.json`:
 
 ```json
 {
-  "api_key": "...",
-  "thoughts": {
-    "thoughtsRepo": "~/thoughts",
-    "reposDir": "repos",
-    "globalDir": "global",
-    "user": "alice",
-    "repoMappings": {
-      "/Users/alice/projects/app": "app_thoughts",
-      "/Users/alice/projects/api": "api_backend"
-    }
+  "thoughtsRepo": "~/thoughts",
+  "reposDir": "repos",
+  "globalDir": "global",
+  "user": "alice",
+  "repoMappings": {
+    "/Users/alice/projects/app": "app_thoughts",
+    "/Users/alice/projects/api": "api_backend"
   }
 }
 ```
@@ -214,7 +211,7 @@ Thoughts configuration is stored in your HumanLayer config file:
 
 ### "Thoughts not configured"
 
-Run `humanlayer thoughts init` to set up thoughts for the first time.
+Run `thoughts init` to set up thoughts for the first time.
 
 ### "Not in a git repository"
 
@@ -225,8 +222,8 @@ The thoughts system requires your code to be in a git repository. Run `git init`
 If automatic sync isn't working:
 
 1. Check git hooks are installed: `ls -la .git/hooks/`
-2. Manually sync: `humanlayer thoughts sync`
-3. Check thoughts repo status: `humanlayer thoughts status`
+2. Manually sync: `thoughts sync`
+3. Check thoughts repo status: `thoughts status`
 
 ### Permission Issues
 
@@ -249,11 +246,11 @@ For monorepos, you can initialize thoughts at the root level or for individual p
 ```bash
 # Root level (recommended)
 cd /path/to/monorepo
-humanlayer thoughts init
+thoughts init
 
 # Or per-package
 cd /path/to/monorepo/packages/frontend
-humanlayer thoughts init
+thoughts init
 ```
 
 ### CI/CD Integration
@@ -270,8 +267,8 @@ The thoughts directory is protected by a pre-commit hook that prevents accidenta
 
 ## FAQ
 
-**Q: Can I use this without HumanLayer's other features?**
-A: Yes! The thoughts system is independent of HumanLayer's approval and communication features.
+**Q: Can I use this as a standalone tool?**
+A: Yes! The thoughts system is a standalone CLI tool for managing developer notes.
 
 **Q: What if I accidentally delete my thoughts?**
 A: Since thoughts are in a git repository, you can recover them using `git restore` or `git checkout`.
@@ -296,11 +293,11 @@ A: No, files in searchable/ are read-only. Always edit the original files (e.g.,
 
 ## Contributing
 
-The thoughts system is part of HumanLayer. To contribute:
+The thoughts system is open source. To contribute:
 
-1. Check out the implementation in `hlyr/src/commands/thoughts/`
-2. Read the original specification in `thoughts.md`
-3. Submit PRs to improve the thoughts system
+1. Check out the implementation in `src/commands/thoughts/`
+2. Submit PRs to improve the thoughts system
+3. Report issues on GitHub
 
 ---
 

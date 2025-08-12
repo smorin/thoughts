@@ -1,233 +1,205 @@
-# HumanLayer CLI
+# Thoughts CLI
 
-HumanLayer, but on your command-line.
+A standalone developer thoughts and notes management system for keeping project documentation separate from code.
 
-A unified CLI tool that provides:
+## Overview
 
-- Direct human contact from terminal or scripts
-- MCP (Model Context Protocol) server functionality
-- Integration with Claude Code SDK for approval workflows
-- Thoughts management system for developer notes and documentation
+Thoughts CLI helps developers maintain project-specific notes, documentation, and thoughts in a centralized repository while keeping them separate from code repositories. This enables:
 
-## Quickstart
+- **Clean Code Repositories**: Keep implementation notes and developer thoughts out of your production code
+- **Centralized Knowledge**: All project thoughts in one searchable location
+- **AI-Friendly**: Makes your notes easily accessible to AI assistants like Claude
+- **Git Integration**: Automatic syncing through git hooks
 
-### Run directly with npx
+## Installation
 
-```bash
-# Contact a human with a message
-npx humanlayer contact_human -m "Need help with deployment approval"
-
-# Or use the long form
-npx humanlayer contact_human --message "Review this pull request"
-```
-
-### Configuration
-
-you will probably always want:
+### Install globally via npm
 
 ```bash
-export HUMANLAYER_API_KEY=...
+npm install -g thoughts
 ```
 
-Using cli flags:
+### Install from source
 
 ```bash
-humanlayer contact_human --message "Review this pull request" --slack-channel "C08G5C3V552"
+git clone https://github.com/yourusername/thoughts.git
+cd thoughts
+npm install
+npm run build
+npm link
 ```
 
-using environment variables:
+## Quick Start
 
 ```bash
-export HUMANLAYER_SLACK_CHANNEL=C08G5C3V552
-humanlayer contact_human --message "Review this pull request"
-```
+# Initialize thoughts in your current repository
+thoughts init
 
-or
+# Check the status of your thoughts setup
+thoughts status
 
-```
-export HUMANLAYER_EMAIL_ADDRESS=human@example.com
-humanlayer contact_human --message "Review this pull request"
-```
+# Sync your thoughts manually
+thoughts sync -m "Updated architecture notes"
 
-**Note:** If no contact channel is configured, HumanLayer will default to the web UI for human interactions.
+# View your configuration
+thoughts config
 
-using a config file:
-
-```bash
-echo '
-{
-  "channel": {
-    "slack": {
-      "channel_or_user_id": "C08G5C3V552"
-    }
-  }
-}
-' > .hlyr.json
-```
-
-```bash
-humanlayer contact_human --message "Review this pull request" --config-file .hlyr.json
-```
-
-### MCP Server Usage
-
-Start an MCP server for integration with MCP clients like Claude Desktop:
-
-```bash
-# Contact human functionality
-humanlayer mcp serve
-
-# Claude Code SDK approval integration
-humanlayer mcp claude_approvals
-
-# Debug MCP servers with inspector
-humanlayer mcp inspector serve
-humanlayer mcp inspector claude_approvals
-```
-
-### Claude Code SDK Integration
-
-For automated approval workflows with Claude Code SDK:
-
-`mcp-config.json`:
-
-```json
-{
-  "mcpServers": {
-    "approvals": {
-      "command": "npx",
-      "args": ["-y", "humanlayer", "mcp", "claude_approvals"],
-      "env": {
-        "HUMANLAYER_API_KEY": "<YOUR_API_KEY>"
-      }
-    }
-  }
-}
-```
-
-```bash
-claude --print "write hello world to a file" \
-  --mcp-config mcp-config.json \
-  --permission-prompt-tool mcp__approvals__request_permission
-```
-
-### Run with claude code
-
-```
-claude --print "do some work" | npx humanlayer contact_human -m -
-```
-
-or
-
-```bash
-allowedTools='Write,Edit,Bash(grep:*)'
-message="make me a file hello.txt with contents 'hello world'"
-
-claude_answer=$(claude --print "$message" --allowedTools "$allowedTools")
-while :; do
-human_answer=$(echo "$claude_answer" | npx humanlayer contact_human -m -)
-message="$human_answer"
-claude_answer=$(claude --print "$message" --allowedTools "$allowedTools" --continue)
-done
-```
-
-### Install globally
-
-```bash
-npm install -g hlyr
-
-# Then use directly
-humanlayer contact_human -m "Production database needs review"
+# Remove thoughts setup from a repository
+thoughts uninit
 ```
 
 ## Commands
 
-### `contact_human`
+### `thoughts init`
 
-Contact a human with a message and wait for a response.
+Initialize thoughts tracking for the current git repository.
 
 ```bash
-humanlayer contact_human -m "Your message here"
+thoughts init [options]
 ```
 
 **Options:**
+- `--directory <name>` - Name for the thoughts directory (default: project name)
+- `--thoughts-repo <path>` - Path to your central thoughts repository
 
-- `-m, --message <text>` - The message to send (required)
+**What it does:**
+- Creates a `thoughts/` directory in your repository
+- Sets up git hooks for automatic syncing
+- Adds appropriate .gitignore entries
+- Creates searchable hard links for AI assistants
 
-**Examples:**
+### `thoughts sync`
 
-```bash
-# Simple message
-humanlayer contact_human -m "Please review the deployment logs"
-
-# Multi-word message
-humanlayer contact_human -m "The API is returning 500 errors, need immediate help"
-
-# Using in scripts
-#!/bin/bash
-if [ $? -ne 0 ]; then
-  humanlayer contact_human -m "Build failed, manual intervention needed"
-fi
-```
-
-### `mcp`
-
-Model Context Protocol server functionality.
+Manually sync your thoughts to the central repository.
 
 ```bash
-humanlayer mcp <subcommand>
+thoughts sync [options]
 ```
 
-**Subcommands:**
+**Options:**
+- `-m, --message <text>` - Commit message for the sync
 
-- `serve` - Start the default MCP server for contact_human functionality
-- `claude_approvals` - Start the Claude approvals MCP server for permission requests
-- `wrapper` - Wrap an existing MCP server with human approval functionality (not implemented yet)
-- `inspector [command]` - Run MCP inspector for debugging MCP servers (defaults to 'serve')
+**Note:** This is automatically triggered by git hooks on commit, but can be run manually when needed.
 
-### `thoughts`
+### `thoughts status`
 
-Manage developer thoughts and notes separately from code repositories.
+Check the current status of your thoughts configuration.
 
 ```bash
-humanlayer thoughts <subcommand>
+thoughts status
 ```
 
-**Subcommands:**
+**Shows:**
+- Configuration status
+- Repository mappings
+- Git sync status
+- Any pending changes
 
-- `init` - Initialize thoughts for the current repository
-- `sync` - Manually sync thoughts and update searchable index
-- `status` - Check the status of your thoughts setup
-- `config` - View or edit thoughts configuration
+### `thoughts config`
 
-**Examples:**
+View or edit your thoughts configuration.
 
 ```bash
-# Initialize thoughts for a new project
-humanlayer thoughts init
-
-# Sync thoughts after making changes
-humanlayer thoughts sync -m "Updated architecture notes"
-
-# Check status
-humanlayer thoughts status
-
-# View configuration
-humanlayer thoughts config --json
+thoughts config [options]
 ```
 
-The thoughts system keeps your notes separate from code while making them easily accessible to AI assistants. See the [Thoughts documentation](./THOUGHTS.md) for detailed information.
+**Options:**
+- `--json` - Output configuration in JSON format
+- `--edit` - Open configuration file in editor
 
-## Use Cases
+### `thoughts uninit`
 
-- **CI/CD Pipelines**: Get human approval before deploying
-- **Monitoring Scripts**: Alert humans when automated checks fail
-- **Development Workflows**: Ask for code review or architectural decisions
-- **Operations**: Escalate issues that require human judgment
+Remove thoughts setup from the current repository.
+
+```bash
+thoughts uninit
+```
+
+**What it does:**
+- Removes the `thoughts/` directory
+- Removes git hooks
+- Cleans up .gitignore entries
+- Preserves your thoughts in the central repository
+
+## How It Works
+
+1. **Initialization**: When you run `thoughts init` in a git repository, it creates a local `thoughts/` directory and sets up git hooks.
+
+2. **Separation**: Your thoughts stay in the `thoughts/` directory, which is gitignored in your code repository but tracked in a separate thoughts repository.
+
+3. **Syncing**: Git hooks automatically sync your thoughts to a central repository whenever you commit code changes.
+
+4. **Searchable Directory**: Hard links in `~/.thoughts-searchable/` make all your thoughts accessible to AI assistants and search tools.
 
 ## Configuration
 
-hlyr uses HumanLayer's configuration system. Set up your contact channels through environment variables or configuration files as documented in the main [HumanLayer documentation](https://humanlayer.dev/docs).
+Thoughts CLI stores its configuration in `~/.thoughts/config.json`. The configuration includes:
+
+```json
+{
+  "thoughtsRepo": "/path/to/central/thoughts/repo",
+  "repoMappings": {
+    "/path/to/code/repo": "project-name"
+  },
+  "user": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  }
+}
+```
+
+## Best Practices
+
+1. **Regular Notes**: Keep implementation notes, architecture decisions, and debugging logs in thoughts
+2. **Project Documentation**: Store project-specific documentation that doesn't belong in code
+3. **AI Context**: Include context and background information to help AI assistants understand your project
+4. **Commit Messages**: Use descriptive commit messages when syncing thoughts
+
+## Examples
+
+### Setting up thoughts for a new project
+
+```bash
+cd ~/projects/my-app
+git init  # If not already a git repository
+thoughts init --directory my-app-notes
+echo "# Architecture Decisions" > thoughts/architecture.md
+echo "# Implementation Notes" > thoughts/notes.md
+thoughts sync -m "Initial thoughts setup"
+```
+
+### Adding thoughts before a code commit
+
+```bash
+echo "## 2024-01-15 - API Refactoring\nReasons for changes..." >> thoughts/notes.md
+git add .
+git commit -m "Refactor API endpoints"
+# Thoughts are automatically synced via git hook
+```
+
+## Troubleshooting
+
+### Thoughts not syncing automatically
+
+Check that git hooks are properly installed:
+```bash
+ls -la .git/hooks/post-commit
+thoughts status
+```
+
+### Cannot initialize thoughts
+
+Ensure you're in a git repository:
+```bash
+git status
+```
+
+### Configuration issues
+
+Reset configuration:
+```bash
+thoughts config --edit
+```
 
 ## Development
 
@@ -241,13 +213,50 @@ npm run build
 # Run tests
 npm test
 
-# Watch mode during development
+# Development mode with watch
 npm run dev
 ```
 
-### Testing Local Approvals
+### `thoughts`
 
-For testing the local MCP approvals system without HumanLayer API access, see [test_local_approvals.md](./test_local_approvals.md).
+Manage developer thoughts and notes separately from code repositories.
+
+```bash
+thoughts <subcommand>
+```
+
+**commands:**
+
+- `init` - Initialize thoughts for the current repository
+- `sync` - Manually sync thoughts and update searchable index
+- `status` - Check the status of your thoughts setup
+- `config` - View or edit thoughts configuration
+
+**Examples:**
+
+```bash
+# Initialize thoughts for a new project
+thoughts init
+
+# Sync thoughts after making changes
+thoughts sync -m "Updated architecture notes"
+
+# Check status
+thoughts status
+
+# View configuration
+thoughts config --json
+```
+
+The thoughts system keeps your notes separate from code while making them easily accessible to AI assistants. See the [Thoughts documentation](./THOUGHTS.md) for detailed information.
+
+
+## Version History
+
+- **v0.1.0** - Initial standalone release extracted from HumanLayer
+  - Core thoughts functionality
+  - Git integration
+  - Searchable directory support
 
 ## License
 
